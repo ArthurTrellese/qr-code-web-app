@@ -50,7 +50,7 @@ def generate_qr(participant_id):
         return f"Erro: ID {participant_id} não encontrado!", 404
 
     # Gera o QR code com o link para o formulário do participante
-    qr_code_data = f"https://web-production-6a6e.up.railway.app/form/{participant_id}"
+    qr_code_data = f"https://gowork.up.railway.app/form/{participant_id}"
     img = qrcode.make(qr_code_data)
 
     # Certifica-se de que a pasta estática exista
