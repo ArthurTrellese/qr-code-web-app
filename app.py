@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, send_file
 import qrcode
 import json
 import os
+import io
 
 app = Flask(__name__)
 
@@ -34,12 +35,14 @@ def initialize_participants():
         }
     save_participants(participants)
 
-# Geração do QR Code
+# Geração do QR Code e envio da imagem diretamente
 @app.route('/generate_qr/<participant_id>')
 def generate_qr(participant_id):
-    img = qrcode.make(f"http://192.168.239.63/form/{participant_id}")
-    img.save(f'static/{participant_id}.png')
-    return f'QR code gerado para {participant_id}. <a href="/static/{participant_id}.png">Clique aqui para ver o QR code</a>'
+    img = qrcode.make(f"https://web-production-6a6e.up.railway.app/form/{participant_id}")  # Usando o domínio correto
+    buf = io.BytesIO()
+    img.save(buf, 'PNG')
+    buf.seek(0)
+    return send_file(buf, mimetype='image/png')
 
 # Exibir o formulário HTML
 @app.route('/form/<participant_id>', methods=['GET'])
