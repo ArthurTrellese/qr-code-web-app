@@ -38,11 +38,22 @@ def initialize_participants():
 # Geração do QR Code e envio da imagem diretamente
 @app.route('/generate_qr/<participant_id>')
 def generate_qr(participant_id):
-    img = qrcode.make(f"https://web-production-6a6e.up.railway.app/form/{participant_id}")  # Usando o domínio correto
-    buf = io.BytesIO()
-    img.save(buf, 'PNG')
-    buf.seek(0)
-    return send_file(buf, mimetype='image/png')
+    participants = load_participants()
+
+    if participant_id not in participants:
+        return f"Erro: ID {participant_id} não encontrado!", 404
+
+    # Gera o QR code com o link para o formulário do participante
+    qr_code_data = f"https://web-production-6a6e.up.railway.app/form/{participant_id}"
+    img = qrcode.make(qr_code_data)
+
+    # Salva a imagem em um buffer de memória
+    buffer = io.BytesIO()
+    img.save(buffer, 'PNG')
+    buffer.seek(0)
+
+    # Envia o QR code gerado diretamente como resposta
+    return send_file(buffer, mimetype='image/png')
 
 # Exibir o formulário HTML
 @app.route('/form/<participant_id>', methods=['GET'])
