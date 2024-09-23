@@ -1,10 +1,10 @@
 {
     "G-0001": {
-        "name": "Luis Cuba",
-        "email": "luishcuba@gmail.com",
-        "contact": "19981621022",
+        "name": "",
+        "email": "",
+        "contact": "",
         "match": "G-0003",
-        "status": "registered"
+        "status": "pending"
     },
     "G-0002": {
         "name": "",
