@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 # Caminho para o arquivo JSON que vai armazenar os dados dos participantes
 db_file = 'participants.json'
+static_dir = 'static'
 
 # Função para carregar o arquivo JSON e inicializar se necessário
 def load_participants():
@@ -35,7 +36,12 @@ def initialize_participants():
         }
     save_participants(participants)
 
-# Geração do QR Code e envio da imagem diretamente
+# Função para criar o diretório estático, se ele não existir
+def create_static_dir():
+    if not os.path.exists(static_dir):
+        os.makedirs(static_dir)
+
+# Geração do QR Code e salvamento na pasta estática
 @app.route('/generate_qr/<participant_id>')
 def generate_qr(participant_id):
     participants = load_participants()
@@ -47,13 +53,14 @@ def generate_qr(participant_id):
     qr_code_data = f"https://web-production-6a6e.up.railway.app/form/{participant_id}"
     img = qrcode.make(qr_code_data)
 
-    # Salva a imagem em um buffer de memória
-    buffer = io.BytesIO()
-    img.save(buffer, 'PNG')
-    buffer.seek(0)
+    # Certifica-se de que a pasta estática exista
+    create_static_dir()
 
-    # Envia o QR code gerado diretamente como resposta
-    return send_file(buffer, mimetype='image/png')
+    # Salva a imagem na pasta estática
+    img_path = os.path.join(static_dir, f'{participant_id}.png')
+    img.save(img_path)
+
+    return f'QR code gerado para {participant_id}. <a href="/static/{participant_id}.png">Clique aqui para ver o QR code</a>'
 
 # Exibir o formulário HTML
 @app.route('/form/<participant_id>', methods=['GET'])
