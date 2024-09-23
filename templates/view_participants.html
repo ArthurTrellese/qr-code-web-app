@@ -12,7 +12,7 @@
             padding: 20px;
         }
         table {
-            width: 80%;
+            width: 90%;
             margin: 20px auto;
             border-collapse: collapse;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -32,6 +32,7 @@
         input[type="text"], input[type="submit"] {
             padding: 5px;
             margin: 5px;
+            width: 100%;
         }
         input[type="submit"] {
             background-color: #007bff;
@@ -41,6 +42,10 @@
         }
         input[type="submit"]:hover {
             background-color: #0056b3;
+        }
+        td form {
+            display: flex;
+            flex-direction: column;
         }
     </style>
 </head>
@@ -54,24 +59,23 @@
                 <th>Email</th>
                 <th>Contato</th>
                 <th>Match</th>
-                <th>Atualizar Match</th>
+                <th>Atualizar Informações</th>
             </tr>
         </thead>
         <tbody>
             {% for participant_id, details in participants.items() %}
             <tr>
-                <td>{{ participant_id }}</td>
-                <td>{{ details.name or "N/A" }}</td>
-                <td>{{ details.email or "N/A" }}</td>
-                <td>{{ details.contact or "N/A" }}</td>
-                <td>{{ details.match }}</td>
-                <td>
-                    <form action="/update_match" method="POST">
+                <form action="/update_participant" method="POST">
+                    <td>{{ participant_id }}</td>
+                    <td><input type="text" name="name" value="{{ details.name or 'N/A' }}" placeholder="Nome"></td>
+                    <td><input type="text" name="email" value="{{ details.email or 'N/A' }}" placeholder="Email"></td>
+                    <td><input type="text" name="contact" value="{{ details.contact or 'N/A' }}" placeholder="Contato"></td>
+                    <td><input type="text" name="match" value="{{ details.match }}" placeholder="Match ID"></td>
+                    <td>
                         <input type="hidden" name="participant_id" value="{{ participant_id }}">
-                        <input type="text" name="new_match_id" value="{{ details.match }}" placeholder="Novo ID do Match" required>
                         <input type="submit" value="Atualizar">
-                    </form>
-                </td>
+                    </td>
+                </form>
             </tr>
             {% endfor %}
         </tbody>
