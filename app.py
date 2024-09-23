@@ -142,5 +142,26 @@ def update_match():
     else:
         return "Erro: ID do participante ou match inválido!", 400
 
+@app.route('/update_participant', methods=['POST'])
+def update_participant():
+    participant_id = request.form['participant_id']
+    name = request.form['name']
+    email = request.form['email']
+    contact = request.form['contact']
+    match = request.form['match']
+
+    participants = load_participants()
+
+    if participant_id in participants:
+        # Atualiza as informações do participante
+        participants[participant_id]['name'] = name
+        participants[participant_id]['email'] = email
+        participants[participant_id]['contact'] = contact
+        participants[participant_id]['match'] = match
+        save_participants(participants)
+        return redirect(url_for('view_participants'))
+    else:
+        return "Erro: ID do participante não encontrado!", 400
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
