@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,7 +87,7 @@
             <div class="loader" id="loader"></div>
             <p id="status-text">Posicione o QR Code dentro do quadro.</p>
         </div>
-        <button id="retry" style="display: none;" onclick="retryScan()">Tentar Novamente</button>
+        <button id="retry" style="display: none;" onclick="retryScan()">Não desistir</button>
     </div>
 
     <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
@@ -128,7 +128,6 @@
                 const qrCode = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
 
                 if (qrCode) {
-                    resultDiv.innerHTML = `<p class="success">QR Code detectado: ${qrCode.data}</p>`;
                     loader.style.display = 'none';
                     processQRCode(qrCode.data);
                 } else {
