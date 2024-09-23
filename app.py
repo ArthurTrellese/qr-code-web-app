@@ -3,12 +3,12 @@ import qrcode
 import json
 import os
 import io
+from PIL import Image
 
 app = Flask(__name__)
 
 # Caminho para o arquivo JSON que vai armazenar os dados dos participantes
 db_file = 'participants.json'
-static_dir = 'static'
 
 # Função para carregar o arquivo JSON e inicializar se necessário
 def load_participants():
@@ -36,12 +36,12 @@ def initialize_participants():
         }
     save_participants(participants)
 
-# Função para criar o diretório estático, se ele não existir
-def create_static_dir():
-    if not os.path.exists(static_dir):
-        os.makedirs(static_dir)
+# Função para garantir que o diretório 'static' exista
+def ensure_static_dir():
+    if not os.path.exists('static'):
+        os.makedirs('static')
 
-# Geração do QR Code e salvamento na pasta estática
+# Geração do QR Code e envio da imagem diretamente
 @app.route('/generate_qr/<participant_id>')
 def generate_qr(participant_id):
     participants = load_participants()
@@ -53,14 +53,15 @@ def generate_qr(participant_id):
     qr_code_data = f"https://gowork.up.railway.app/form/{participant_id}"
     img = qrcode.make(qr_code_data)
 
-    # Certifica-se de que a pasta estática exista
-    create_static_dir()
+    # Verifica se a pasta 'static' existe e cria, se necessário
+    ensure_static_dir()
 
-    # Salva a imagem na pasta estática
-    img_path = os.path.join(static_dir, f'{participant_id}.png')
-    img.save(img_path)
+    # Salva a imagem do QR code no diretório 'static'
+    qr_image_path = f'static/{participant_id}.png'
+    img.save(qr_image_path)
 
-    return f'QR code gerado para {participant_id}. <a href="/static/{participant_id}.png">Clique aqui para ver o QR code</a>'
+    # Envia o QR code gerado diretamente como resposta
+    return f'QR code gerado para {participant_id}. <a href="/{qr_image_path}">Clique aqui para ver o QR code</a>'
 
 # Exibir o formulário HTML
 @app.route('/form/<participant_id>', methods=['GET'])
