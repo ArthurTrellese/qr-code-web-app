@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escaneie o QR Code do Colega</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+            padding: 50px;
+        }
+        .scan-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: auto;
+        }
+        h2 {
+            color: #007bff;
+        }
+        #video {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="scan-container">
+        <h2>Escaneie o QR Code do Colega</h2>
+
+        <video id="video" autoplay></video>
+        <canvas id="canvas" hidden></canvas>
+        <div id="result"></div>
+    </div>
+
+    <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const resultDiv = document.getElementById('result');
+
+        // Função para iniciar a câmera e capturar o QR code
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(stream => {
+                video.srcObject = stream;
+                video.setAttribute('playsinline', true); // para iOS compatibilidade
+                video.play();
+                scanQRCode();
+            })
+            .catch(err => {
+                console.error("Erro ao acessar a câmera: ", err);
+                resultDiv.innerHTML = `<p>Erro ao acessar a câmera.</p>`;
+            });
+        }
+
+        // Função para escanear o QR code
+        function scanQRCode() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.hidden = false;
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const qrCode = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+
+                if (qrCode) {
+                    resultDiv.innerHTML = `<p>QR Code detectado: ${qrCode.data}</p>`;
+                    processQRCode(qrCode.data);
+                } else {
+                    requestAnimationFrame(scanQRCode);
+                }
+            } else {
+                requestAnimationFrame(scanQRCode);
+            }
+        }
+
+        // Função para enviar o QR code escaneado ao backend e verificar o match
+        function processQRCode(scannedId) {
+            const participantId = "{{ participant_id }}";
+
+            fetch('/check_match', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'participant_id': participantId,
+                    'scanned_id': scannedId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.innerHTML = `<p>${data.status}</p>`;
+            });
+        }
+
+        // Iniciar a câmera ao carregar a página
+        window.onload = () => {
+            startCamera();
+        };
+    </script>
+</body>
+</html>
