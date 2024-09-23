@@ -6,37 +6,73 @@
     <title>Escaneie o QR Code do Colega</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            text-align: center;
-            padding: 50px;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
         .scan-container {
             background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            margin: auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
         }
         h2 {
             color: #007bff;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
         #video {
             width: 100%;
             border-radius: 10px;
+            margin-top: 15px;
+            border: 2px solid #007bff;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
             margin-top: 20px;
         }
-        input[type="submit"] {
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            color: #e74c3c;
+        }
+        .success {
+            color: #27ae60;
+        }
+        button {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px;
-            width: 100%;
+            padding: 12px 20px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
         }
-        input[type="submit"]:hover {
+        button:hover {
             background-color: #0056b3;
         }
     </style>
@@ -47,7 +83,11 @@
 
         <video id="video" autoplay></video>
         <canvas id="canvas" hidden></canvas>
-        <div id="result"></div>
+        <div id="result">
+            <div class="loader" id="loader"></div>
+            <p id="status-text">Posicione o QR Code dentro do quadro.</p>
+        </div>
+        <button id="retry" style="display: none;" onclick="retryScan()">Tentar Novamente</button>
     </div>
 
     <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
@@ -57,19 +97,22 @@
         const canvas = document.getElementById('canvas');
         const context = canvas.getContext('2d');
         const resultDiv = document.getElementById('result');
+        const loader = document.getElementById('loader');
+        const statusText = document.getElementById('status-text');
+        const retryButton = document.getElementById('retry');
 
         // Função para iniciar a câmera e capturar o QR code
         function startCamera() {
             navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
             .then(stream => {
                 video.srcObject = stream;
-                video.setAttribute('playsinline', true); // para iOS compatibilidade
+                video.setAttribute('playsinline', true); // Para compatibilidade com iOS
                 video.play();
                 scanQRCode();
             })
             .catch(err => {
                 console.error("Erro ao acessar a câmera: ", err);
-                resultDiv.innerHTML = `<p>Erro ao acessar a câmera.</p>`;
+                resultDiv.innerHTML = `<p class="error">Erro ao acessar a câmera.</p>`;
             });
         }
 
@@ -85,7 +128,8 @@
                 const qrCode = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
 
                 if (qrCode) {
-                    resultDiv.innerHTML = `<p>QR Code detectado: ${qrCode.data}</p>`;
+                    resultDiv.innerHTML = `<p class="success">QR Code detectado: ${qrCode.data}</p>`;
+                    loader.style.display = 'none';
                     processQRCode(qrCode.data);
                 } else {
                     requestAnimationFrame(scanQRCode);
@@ -111,8 +155,20 @@
             })
             .then(response => response.json())
             .then(data => {
-                resultDiv.innerHTML = `<p>${data.status}</p>`;
+                if (data.success) {
+                    statusText.innerHTML = `<p class="success">${data.status}</p>`;
+                } else {
+                    statusText.innerHTML = `<p class="error">${data.status}</p>`;
+                    retryButton.style.display = 'block';
+                }
             });
+        }
+
+        // Função para reiniciar a câmera e tentar novamente
+        function retryScan() {
+            resultDiv.innerHTML = `<div class="loader"></div><p id="status-text">Posicione o QR Code dentro do quadro.</p>`;
+            retryButton.style.display = 'none';
+            startCamera();
         }
 
         // Iniciar a câmera ao carregar a página
