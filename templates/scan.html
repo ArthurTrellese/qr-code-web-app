@@ -18,20 +18,21 @@
         }
         .scan-container {
             background-color: white;
-            padding: 30px;
-            border-radius: 15px;
+            padding: 20px;
+            border-radius: 10px;
             box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
-            width: 90%;
+            width: 100%;
             max-width: 400px;
         }
         h2 {
             color: #007bff;
-            font-size: 24px;
+            font-size: 20px;
             margin-bottom: 20px;
         }
         #video {
             width: 100%;
+            height: auto;
             border-radius: 10px;
             margin-top: 15px;
             border: 2px solid #007bff;
@@ -81,12 +82,15 @@
     <div class="scan-container">
         <h2>Escaneie o QR Code do Colega</h2>
 
-        <video id="video" autoplay></video>
+        <!-- Ajustando para garantir que apenas um elemento de vídeo seja renderizado -->
+        <video id="video" autoplay playsinline></video>
         <canvas id="canvas" hidden></canvas>
+
         <div id="result">
             <div class="loader" id="loader"></div>
             <p id="status-text">Posicione o QR Code dentro do quadro.</p>
         </div>
+
         <button id="retry" style="display: none;" onclick="retryScan()">Não desistir</button>
     </div>
 
