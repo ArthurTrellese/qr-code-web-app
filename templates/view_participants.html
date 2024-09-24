@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Participantes</title>
+    <title>Lista de Participantes</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,7 +29,7 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-        input[type="text"], input[type="submit"] {
+        input[type="text"], input[type="submit"], input[type="search"] {
             padding: 5px;
             margin: 5px;
             width: 100%;
@@ -43,42 +43,88 @@
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
-        td form {
+        #pagination {
+            margin: 20px 0;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+        }
+        .page-item {
+            display: inline-block;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .page-item.active {
+            font-weight: bold;
+        }
+        #filters {
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        #filters input[type="search"] {
+            width: 300px;
+            margin-right: 10px;
+        }
+        #update-all {
+            width: 200px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #update-all:hover {
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
     <h2>Lista de Participantes</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Contato</th>
-                <th>Match</th>
-                <th>Atualizar Informações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for participant_id, details in participants.items() %}
-            <tr>
-                <form action="/update_participant" method="POST">
+
+    <!-- Barra de Busca e Filtros -->
+    <div id="filters">
+        <form method="GET" action="/view_participants">
+            <input type="search" name="search" placeholder="Buscar participante...">
+            <input type="submit" value="Filtrar">
+        </form>
+    </div>
+
+    <!-- Tabela de Participantes -->
+    <form id="update-all-form" action="/update_all_participants" method="POST">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Contato</th>
+                    <th>Match</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant_id, details in participants.items() %}
+                <tr>
                     <td>{{ participant_id }}</td>
-                    <td><input type="text" name="name" value="{{ details.name or 'N/A' }}" placeholder="Nome"></td>
-                    <td><input type="text" name="email" value="{{ details.email or 'N/A' }}" placeholder="Email"></td>
-                    <td><input type="text" name="contact" value="{{ details.contact or 'N/A' }}" placeholder="Contato"></td>
-                    <td><input type="text" name="match" value="{{ details.match }}" placeholder="Match ID"></td>
-                    <td>
-                        <input type="hidden" name="participant_id" value="{{ participant_id }}">
-                        <input type="submit" value="Atualizar">
-                    </td>
-                </form>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    <td><input type="text" name="participants[{{ participant_id }}][name]" value="{{ details.name or 'N/A' }}"></td>
+                    <td><input type="text" name="participants[{{ participant_id }}][email]" value="{{ details.email or 'N/A' }}"></td>
+                    <td><input type="text" name="participants[{{ participant_id }}][contact]" value="{{ details.contact or 'N/A' }}"></td>
+                    <td><input type="text" name="participants[{{ participant_id }}][match]" value="{{ details.match }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Botão único para atualizar todos os participantes -->
+        <input type="submit" id="update-all" value="Atualizar Todos">
+    </form>
+
+    <!-- Paginação -->
+    <div id="pagination">
+        {% for page_num in pages %}
+        <span class="page-item {% if page_num == current_page %}active{% endif %}">
+            <a href="/view_participants?page={{ page_num }}">{{ page_num }}</a>
+        </span>
+        {% endfor %}
+    </div>
 </body>
 </html>
