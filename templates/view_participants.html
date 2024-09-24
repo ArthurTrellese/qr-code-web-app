@@ -144,11 +144,11 @@
                     data.participants.forEach(participant => {
                         const row = `
                             <tr>
-                                <td>${participant.participant_id}</td>
-                                <td><input type="text" name="participants[${participant.participant_id}][name]" value="${participant.name || 'N/A'}"></td>
-                                <td><input type="text" name="participants[${participant.participant_id}][email]" value="${participant.email || 'N/A'}"></td>
-                                <td><input type="text" name="participants[${participant.participant_id}][contact]" value="${participant.contact || 'N/A'}"></td>
-                                <td><input type="text" name="participants[${participant.participant_id}][match]" value="${participant.match}"></td>
+                                <td>${participant[0]}</td>
+                                <td><input type="text" name="participants[${participant[0]}][name]" value="${participant[1].name || 'N/A'}"></td>
+                                <td><input type="text" name="participants[${participant[0]}][email]" value="${participant[1].email || 'N/A'}"></td>
+                                <td><input type="text" name="participants[${participant[0]}][contact]" value="${participant[1].contact || 'N/A'}"></td>
+                                <td><input type="text" name="participants[${participant[0]}][match]" value="${participant[1].match}"></td>
                             </tr>
                         `;
                         tableBody.innerHTML += row;
