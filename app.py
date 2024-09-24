@@ -41,6 +41,11 @@ def ensure_static_dir():
     if not os.path.exists('static'):
         os.makedirs('static')
 
+# Rota para o menu principal (index)
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 # Geração do QR Code e envio da imagem diretamente
 @app.route('/generate_qr/<participant_id>')
 def generate_qr(participant_id):
