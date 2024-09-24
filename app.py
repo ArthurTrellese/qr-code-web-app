@@ -142,6 +142,7 @@ def update_match():
     else:
         return "Erro: ID do participante ou match inválido!", 400
 
+# Rota para atualizar as informações do participante
 @app.route('/update_participant', methods=['POST'])
 def update_participant():
     participant_id = request.form['participant_id']
