@@ -48,14 +48,6 @@
             display: flex;
             justify-content: center;
         }
-        .page-item {
-            display: inline-block;
-            margin: 0 5px;
-            cursor: pointer;
-        }
-        .page-item.active {
-            font-weight: bold;
-        }
         #filters {
             margin: 20px;
             display: flex;
@@ -82,6 +74,18 @@
         #update-all:hover {
             background-color: #218838;
         }
+        #load-more {
+            width: 200px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 20px;
+        }
+        #load-more:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -107,8 +111,8 @@
                     <th>Match</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for participant_id, details in participants.items() %}
+            <tbody id="participant-table-body">
+                {% for participant_id, details in participants %}
                 <tr>
                     <td>{{ participant_id }}</td>
                     <td><input type="text" name="participants[{{ participant_id }}][name]" value="{{ details.name or 'N/A' }}"></td>
@@ -124,13 +128,36 @@
         <button type="submit" id="update-all">Atualizar Todos</button>
     </form>
 
-    <!-- Paginação -->
-    <div id="pagination">
-        {% for page_num in pages %}
-        <span class="page-item {% if page_num == current_page %}active{% endif %}">
-            <a href="/view_participants?page={{ page_num }}">{{ page_num }}</a>
-        </span>
-        {% endfor %}
-    </div>
+    <!-- Botão "Ver mais" -->
+    <button id="load-more" onclick="loadMore()">Ver Mais</button>
+
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 100;
+
+        function loadMore() {
+            currentPage++;
+            fetch(`/view_participants?page=${currentPage}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('participant-table-body');
+                    data.participants.forEach(participant => {
+                        const row = `
+                            <tr>
+                                <td>${participant.participant_id}</td>
+                                <td><input type="text" name="participants[${participant.participant_id}][name]" value="${participant.name || 'N/A'}"></td>
+                                <td><input type="text" name="participants[${participant.participant_id}][email]" value="${participant.email || 'N/A'}"></td>
+                                <td><input type="text" name="participants[${participant.participant_id}][contact]" value="${participant.contact || 'N/A'}"></td>
+                                <td><input type="text" name="participants[${participant.participant_id}][match]" value="${participant.match}"></td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                    if (!data.has_more) {
+                        document.getElementById('load-more').style.display = 'none';
+                    }
+                });
+        }
+    </script>
 </body>
 </html>
