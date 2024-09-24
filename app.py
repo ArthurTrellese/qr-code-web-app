@@ -4,7 +4,6 @@ import json
 import os
 import io
 from PIL import Image
-from math import ceil
 
 app = Flask(__name__)
 
@@ -127,6 +126,7 @@ def check_match():
     else:
         return jsonify({"status": "Nenhum MATCH encontrado, continue procurando.", "success": False})
 
+# Rota para visualizar os participantes com a funcionalidade "Ver mais"
 @app.route('/view_participants', methods=['GET'])
 def view_participants():
     page = int(request.args.get('page', 1))  # Pega a página atual, padrão é 1
@@ -138,14 +138,17 @@ def view_participants():
     if search_query:
         participants = {pid: details for pid, details in participants.items() if search_query.lower() in details['name'].lower()}
 
-    # Paginação: exibindo 100 por vez
+    # Paginação
     start = (page - 1) * 100
     end = start + 100
     paginated_participants = list(participants.items())[start:end]
 
     has_more = end < len(participants)
 
-    return render_template('view_participants.html', participants=paginated_participants, has_more=has_more)
+    return jsonify({
+        'participants': paginated_participants,
+        'has_more': has_more
+    })
 
 # Rota para atualizar o match manualmente
 @app.route('/update_match', methods=['POST'])
