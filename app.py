@@ -127,34 +127,28 @@ def check_match():
     else:
         return jsonify({"status": "Nenhum MATCH encontrado, continue procurando.", "success": False})
 
-# Rota para exibir a lista de participantes e seus dados (matches editáveis) com paginação e busca
 @app.route('/view_participants', methods=['GET'])
 def view_participants():
+    page = int(request.args.get('page', 1))  # Pega a página atual, padrão é 1
+    search_query = request.args.get('search', '')
+
     participants = load_participants()
-
-    # Implementando a busca
-    search_query = request.args.get('search', '').lower()
+    
+    # Filtra os participantes se houver uma busca
     if search_query:
-        participants = {pid: details for pid, details in participants.items() if search_query in pid.lower() or search_query in details['name'].lower()}
+        participants = {pid: details for pid, details in participants.items() if search_query.lower() in details['name'].lower()}
 
-    # Implementando a paginação
-    page = int(request.args.get('page', 1))
-    per_page = 20  # número de registros por página
-    total_participants = len(participants)
-    total_pages = ceil(total_participants / per_page)
+    # Paginação
+    start = (page - 1) * 100
+    end = start + 100
+    paginated_participants = list(participants.items())[start:end]
 
-    start_idx = (page - 1) * per_page
-    end_idx = start_idx + per_page
+    has_more = end < len(participants)
 
-    # Lista de participantes paginada
-    paginated_participants = dict(list(participants.items())[start_idx:end_idx])
-
-    return render_template(
-        'view_participants.html',
-        participants=paginated_participants,
-        current_page=page,
-        total_pages=total_pages
-    )
+    return jsonify({
+        'participants': paginated_participants,
+        'has_more': has_more
+    })
 
 # Rota para atualizar o match manualmente
 @app.route('/update_match', methods=['POST'])
