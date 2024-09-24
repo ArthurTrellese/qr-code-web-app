@@ -138,17 +138,14 @@ def view_participants():
     if search_query:
         participants = {pid: details for pid, details in participants.items() if search_query.lower() in details['name'].lower()}
 
-    # Paginação
+    # Paginação: exibindo 100 por vez
     start = (page - 1) * 100
     end = start + 100
     paginated_participants = list(participants.items())[start:end]
 
     has_more = end < len(participants)
 
-    return jsonify({
-        'participants': paginated_participants,
-        'has_more': has_more
-    })
+    return render_template('view_participants.html', participants=paginated_participants, has_more=has_more)
 
 # Rota para atualizar o match manualmente
 @app.route('/update_match', methods=['POST'])
