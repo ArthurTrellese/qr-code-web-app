@@ -82,7 +82,6 @@
     <div class="scan-container">
         <h2>Escaneie o QR Code do Colega</h2>
 
-        <!-- Ajustando para garantir que apenas um elemento de vídeo seja renderizado -->
         <video id="video" autoplay playsinline></video>
         <canvas id="canvas" hidden></canvas>
 
@@ -91,12 +90,14 @@
             <p id="status-text">Posicione o QR Code dentro do quadro.</p>
         </div>
 
-        <button id="retry" style="display: none;" onclick="retryScan()">Não desistir</button>
+        <button id="retry" style="display: none;" onclick="retryScan()">Tentar novamente</button>
     </div>
 
     <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
 
     <script>
+        let streamStarted = false; // Controla se a câmera já foi iniciada
+
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const context = canvas.getContext('2d');
@@ -107,17 +108,20 @@
 
         // Função para iniciar a câmera e capturar o QR code
         function startCamera() {
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-            .then(stream => {
-                video.srcObject = stream;
-                video.setAttribute('playsinline', true); // Para compatibilidade com iOS
-                video.play();
-                scanQRCode();
-            })
-            .catch(err => {
-                console.error("Erro ao acessar a câmera: ", err);
-                resultDiv.innerHTML = `<p class="error">Erro ao acessar a câmera.</p>`;
-            });
+            if (!streamStarted) { // Garantir que a câmera só inicie uma vez
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.setAttribute('playsinline', true); // Para compatibilidade com iOS
+                    video.play();
+                    streamStarted = true; // Marcar a câmera como iniciada
+                    scanQRCode();
+                })
+                .catch(err => {
+                    console.error("Erro ao acessar a câmera: ", err);
+                    resultDiv.innerHTML = `<p class="error">Erro ao acessar a câmera.</p>`;
+                });
+            }
         }
 
         // Função para escanear o QR code
@@ -171,7 +175,7 @@
         function retryScan() {
             resultDiv.innerHTML = `<div class="loader"></div><p id="status-text">Posicione o QR Code dentro do quadro.</p>`;
             retryButton.style.display = 'none';
-            startCamera();
+            scanQRCode(); // Não reinicia a câmera, apenas tenta escanear novamente
         }
 
         // Iniciar a câmera ao carregar a página
