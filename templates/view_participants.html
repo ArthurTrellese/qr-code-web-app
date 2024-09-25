@@ -95,18 +95,20 @@
                     <th>QR Code</th>
                 </tr>
             </thead>
-            <tbody id="participant-table-body">
-                {% for participant_id, details in participants.items() %}
-                <tr>
-                    <td>{{ participant_id }}</td>
-                    <td><input type="text" name="participants[{{ participant_id }}][name]" value="{{ details.name or 'N/A' }}"></td>
-                    <td><input type="text" name="participants[{{ participant_id }}][email]" value="{{ details.email or 'N/A' }}"></td>
-                    <td><input type="text" name="participants[{{ participant_id }}][contact]" value="{{ details.contact or 'N/A' }}"></td>
-                    <td><input type="text" name="participants[{{ participant_id }}][match]" value="{{ details.match }}"></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                <tbody id="participant-table-body">
+                    {% for participant_id, details in participants.items() %}
+                    <tr>
+                        <td>{{ participant_id }}</td>
+                        <td><input type="text" name="participants[{{ participant_id }}][name]" value="{{ details.name or 'N/A' }}"></td>
+                        <td><input type="text" name="participants[{{ participant_id }}][email]" value="{{ details.email or 'N/A' }}"></td>
+                        <td><input type="text" name="participants[{{ participant_id }}][contact]" value="{{ details.contact or 'N/A' }}"></td>
+                        <td><input type="text" name="participants[{{ participant_id }}][match]" value="{{ details.match }}"></td>
+                        <!-- Coluna do QR Code (link para o formulário) -->
+                        <td><a href="{{ url_for('show_form', participant_id=participant_id) }}" target="_blank">Formulário</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
         <!-- Botão flutuante para atualizar todos os participantes -->
         <button type="submit" id="update-all">Atualizar Todos</button>
