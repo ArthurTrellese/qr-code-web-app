@@ -19,6 +19,11 @@ else:
 
 print("Credenciais Firebase carregadas com sucesso.")
 
+# Função para garantir que o diretório 'static' exista
+def ensure_static_dir():
+    if not os.path.exists('static'):
+        os.makedirs('static')
+
 # Função para inicializar os participantes no Firestore (caso ainda não estejam lá)
 def initialize_participants():
     participants_ref = db.collection('participants')
@@ -51,11 +56,6 @@ def init_participants():
 @app.route('/')
 def index():
     return render_template('index.html')
-
-# Função para garantir que o diretório 'static' exista
-def ensure_static_dir():
-    if not os.path.exists('static'):
-        os.makedirs('static')
 
 # Geração do QR Code e envio da imagem diretamente
 @app.route('/generate_qr/<participant_id>')
