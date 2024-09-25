@@ -176,18 +176,17 @@ def update_participant():
 # Rota para atualizar todos os participantes
 @app.route('/update_all_participants', methods=['POST'])
 def update_all_participants():
-    participants_data = request.form.to_dict(flat=False)  # Converte o formulário em um dicionário
+    participants_data = request.form.to_dict(flat=False)
     participants = load_participants()
 
-    if not participants_data:
-        return "Erro: Nenhum dado enviado para atualização.", 400
-
-    for participant_id, details in participants_data.items():
+    # Garantir que o backend processe corretamente o campo `match` vazio
+    for participant_id, details in participants_data.get('participants', {}).items():
         if participant_id in participants:
-            participants[participant_id]['name'] = details[0].get('name', participants[participant_id]['name'])
-            participants[participant_id]['email'] = details[0].get('email', participants[participant_id]['email'])
-            participants[participant_id]['contact'] = details[0].get('contact', participants[participant_id]['contact'])
-            participants[participant_id]['match'] = details[0].get('match', participants[participant_id]['match'])
+            participants[participant_id]['name'] = details.get('name', [participants[participant_id]['name']])[0]
+            participants[participant_id]['email'] = details.get('email', [participants[participant_id]['email']])[0]
+            participants[participant_id]['contact'] = details.get('contact', [participants[participant_id]['contact']])[0]
+            # Verificação do campo `match`, atualizando mesmo se estiver vazio
+            participants[participant_id]['match'] = details.get('match', [''])[0]
 
     save_participants(participants)
     return redirect(url_for('view_participants'))
