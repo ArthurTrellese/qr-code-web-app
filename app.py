@@ -7,7 +7,7 @@ from firebase_admin import credentials, firestore
 app = Flask(__name__)
 
 # Inicializar o Firebase Admin SDK com suas credenciais
-cred = credentials.Certificate('firebase_credentials.json')  # Certifique-se de que este arquivo existe no seu projeto
+cred = credentials.Certificate('firebase_credentials.json')  # Certifique-se de que o arquivo está no diretório correto
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
