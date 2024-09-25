@@ -43,11 +43,6 @@
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
-        #pagination {
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-        }
         #filters {
             margin: 20px;
             display: flex;
@@ -109,6 +104,7 @@
                     <th>Email</th>
                     <th>Contato</th>
                     <th>Match</th>
+                    <th>QR Code</th>
                 </tr>
             </thead>
             <tbody id="participant-table-body">
@@ -119,6 +115,7 @@
                     <td><input type="text" name="participants[{{ participant_id }}][email]" value="{{ details.email or 'N/A' }}"></td>
                     <td><input type="text" name="participants[{{ participant_id }}][contact]" value="{{ details.contact or 'N/A' }}"></td>
                     <td><input type="text" name="participants[{{ participant_id }}][match]" value="{{ details.match }}"></td>
+                    <td><a href="/generate_qr/{{ participant_id }}" target="_blank">Ver QR Code</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -133,7 +130,6 @@
 
     <script>
         let currentPage = 1;
-        const itemsPerPage = 100;
 
         function loadMore() {
             currentPage++;
@@ -149,6 +145,7 @@
                                 <td><input type="text" name="participants[${participant[0]}][email]" value="${participant[1].email || 'N/A'}"></td>
                                 <td><input type="text" name="participants[${participant[0]}][contact]" value="${participant[1].contact || 'N/A'}"></td>
                                 <td><input type="text" name="participants[${participant[0]}][match]" value="${participant[1].match}"></td>
+                                <td><a href="/generate_qr/${participant[0]}" target="_blank">Ver QR Code</a></td>
                             </tr>
                         `;
                         tableBody.innerHTML += row;
