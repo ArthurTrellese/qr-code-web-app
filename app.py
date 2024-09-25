@@ -12,6 +12,8 @@ firebase_credentials = os.getenv('FIREBASE_CREDENTIALS')  # Pega o conteúdo da 
 cred = credentials.Certificate(json.loads(firebase_credentials))  # Converte o conteúdo JSON para credenciais
 firebase_admin.initialize_app(cred)
 
+print(firebase_credentials)
+
 # Função para inicializar os participantes no Firestore (caso ainda não estejam lá)
 def initialize_participants():
     participants_ref = db.collection('participants')
