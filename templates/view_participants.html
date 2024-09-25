@@ -96,14 +96,13 @@
                 </tr>
             </thead>
             <tbody id="participant-table-body">
-                {% for participant_id, details in participants %}
+                {% for participant_id, details in participants.items() %}
                 <tr>
                     <td>{{ participant_id }}</td>
                     <td><input type="text" name="participants[{{ participant_id }}][name]" value="{{ details.name or 'N/A' }}"></td>
                     <td><input type="text" name="participants[{{ participant_id }}][email]" value="{{ details.email or 'N/A' }}"></td>
                     <td><input type="text" name="participants[{{ participant_id }}][contact]" value="{{ details.contact or 'N/A' }}"></td>
                     <td><input type="text" name="participants[{{ participant_id }}][match]" value="{{ details.match }}"></td>
-                    <td><a href="/generate_qr/{{ participant_id }}" target="_blank">Ver QR Code</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
