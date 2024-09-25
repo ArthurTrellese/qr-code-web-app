@@ -145,10 +145,7 @@ def view_participants():
 
     has_more = end < len(participants)
 
-    return jsonify({
-        'participants': paginated_participants,
-        'has_more': has_more
-    })
+    return render_template('view_participants.html', participants=paginated_participants, has_more=has_more)
 
 # Rota para atualizar o match manualmente
 @app.route('/update_match', methods=['POST'])
