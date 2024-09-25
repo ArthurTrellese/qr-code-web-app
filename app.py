@@ -179,15 +179,20 @@ def update_all_participants():
     participants_data = request.form.to_dict(flat=False)
     participants = load_participants()
 
-    # Garantir que o backend processe corretamente o campo `match` vazio
-    for participant_id, details in participants_data.get('participants', {}).items():
-        if participant_id in participants:
-            participants[participant_id]['name'] = details.get('name', [participants[participant_id]['name']])[0]
-            participants[participant_id]['email'] = details.get('email', [participants[participant_id]['email']])[0]
-            participants[participant_id]['contact'] = details.get('contact', [participants[participant_id]['contact']])[0]
-            # Verificação do campo `match`, atualizando mesmo se estiver vazio
-            participants[participant_id]['match'] = details.get('match', [''])[0]
+    for participant_id in participants.keys():
+        # Pega o valor dos campos enviados, permitindo que sejam vazios
+        name = participants_data.get(f'participants[{participant_id}][name]', [''])[0]
+        email = participants_data.get(f'participants[{participant_id}][email]', [''])[0]
+        contact = participants_data.get(f'participants[{participant_id}][contact]', [''])[0]
+        match = participants_data.get(f'participants[{participant_id}][match]', [''])[0]
 
+        # Atualiza os dados do participante com os novos valores, inclusive valores vazios
+        participants[participant_id]['name'] = name
+        participants[participant_id]['email'] = email
+        participants[participant_id]['contact'] = contact
+        participants[participant_id]['match'] = match  # Permite valores vazios para o campo "match"
+
+    # Salva as alterações no arquivo JSON
     save_participants(participants)
     return redirect(url_for('view_participants'))
 
