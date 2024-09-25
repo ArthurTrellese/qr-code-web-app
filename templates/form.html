@@ -75,6 +75,7 @@
         <div class="form-container">
             <h2>Cadastro de Participante</h2>
             <form action="/submit" method="POST">
+                <!-- Esse campo hidden é essencial para garantir que o ID do participante seja enviado -->
                 <input type="hidden" name="participant_id" value="{{ participant_id }}">
                 
                 <label for="name">Nome:</label>
