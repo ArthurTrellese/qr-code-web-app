@@ -28,9 +28,21 @@ def initialize_participants():
             "name": "",
             "email": "",
             "contact": "",
-            "match": "",  # Inicializando o campo "match" em branco
+            "match": "",
             "status": "pending"
         })
+    print("Participantes inicializados com sucesso.")
+
+# Rota para inicializar os participantes manualmente
+@app.route('/init_participants')
+def init_participants():
+    initialize_participants()
+    return "Participantes inicializados com sucesso."
+
+# Rota para o menu principal (index)
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 # Função para garantir que o diretório 'static' exista
 def ensure_static_dir():
