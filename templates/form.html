@@ -1,65 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro do Participante</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
             color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            padding: 50px;
+        }
+        .logo {
+            margin-bottom: 30px;
+        }
+        .logo img {
+            width: 150px;
         }
         .form-container {
             background-color: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            margin: auto;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
         }
         h2 {
             color: #007bff;
+            margin-bottom: 20px;
+            font-size: 22px;
         }
         input[type="text"], input[type="email"], input[type="tel"] {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 12px;
+            margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 16px;
         }
         input[type="submit"] {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 12px;
             width: 100%;
             border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+        footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h2>Preencha seus dados</h2>
-        <form action="/submit" method="POST">
-            <input type="hidden" name="participant_id" value="{{ participant_id }}">
-            <label for="name">Nome:</label><br>
-            <input type="text" id="name" name="name" required><br><br>
-
-            <label for="email">E-mail:</label><br>
-            <input type="email" id="email" name="email" required><br><br>
-
-            <label for="contact">Contato:</label><br>
-            <input type="tel" id="contact" name="contact" required><br><br>
-
-            <input type="submit" value="Enviar">
-        </form>
+    <div class="container">
+        <div class="logo">
+            <img src="https://www.gowork.com.br/wp-content/uploads/2017/07/logo_GoWork_original.png" alt="CoGowork Logo">
+        </div>
+        <div class="form-container">
+            <h2>Cadastro de Participante</h2>
+            <form action="/submit" method="POST">
+                <input type="hidden" name="participant_id" value="{{ participant_id }}">
+                
+                <label for="name">Nome:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="contact">Contato:</label>
+                <input type="tel" id="contact" name="contact" required>
+                
+                <input type="submit" value="Enviar">
+            </form>
+        </div>
+        <footer>
+            © 2024 CoGowork. Todos os direitos reservados.
+        </footer>
     </div>
 </body>
 </html>
