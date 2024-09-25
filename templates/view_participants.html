@@ -99,11 +99,12 @@
                     {% for participant_id, details in participants.items() %}
                     <tr>
                         <td>{{ participant_id }}</td>
-                        <td><input type="text" name="participants[{{ participant_id }}][name]" value="{{ details.name or 'N/A' }}"></td>
-                        <td><input type="text" name="participants[{{ participant_id }}][email]" value="{{ details.email or 'N/A' }}"></td>
-                        <td><input type="text" name="participants[{{ participant_id }}][contact]" value="{{ details.contact or 'N/A' }}"></td>
+                        <td><input type="text" name="participants[{{ participant_id }}][name]" value="{{ details.name }}"></td>
+                        <td><input type="text" name="participants[{{ participant_id }}][email]" value="{{ details.email }}"></td>
+                        <td><input type="text" name="participants[{{ participant_id }}][contact]" value="{{ details.contact }}"></td>
                         <td><input type="text" name="participants[{{ participant_id }}][match]" value="{{ details.match }}"></td>
                         <td>
+                            <!-- Exibe o link do QR Code, mas não permite edição -->
                             <input type="text" value="https://gowork.up.railway.app/form/{{ participant_id }}" readonly style="width: 100%;">
                         </td>
                     </tr>
