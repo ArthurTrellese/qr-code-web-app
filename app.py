@@ -129,14 +129,10 @@ def check_match():
 # Rota para visualizar todos os participantes sem paginação
 @app.route('/view_participants', methods=['GET'])
 def view_participants():
-    search_query = request.args.get('search', '')
+    if not os.path.exists(db_file):
+        return "Erro: O arquivo participants.json não foi encontrado.", 500
 
     participants = load_participants()
-    
-    # Filtra os participantes se houver uma busca
-    if search_query:
-        participants = {pid: details for pid, details in participants.items() if search_query.lower() in details['name'].lower()}
-
     return render_template('view_participants.html', participants=participants)
 
 # Rota para atualizar o match manualmente
