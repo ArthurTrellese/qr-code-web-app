@@ -103,8 +103,10 @@
                         <td><input type="text" name="participants[{{ participant_id }}][email]" value="{{ details.email or 'N/A' }}"></td>
                         <td><input type="text" name="participants[{{ participant_id }}][contact]" value="{{ details.contact or 'N/A' }}"></td>
                         <td><input type="text" name="participants[{{ participant_id }}][match]" value="{{ details.match }}"></td>
-                        <!-- Coluna do QR Code (link para o formulário) -->
-                        <td><a href="{{ url_for('show_form', participant_id=participant_id) }}" target="_blank">Formulário</a></td>
+                        <!-- Coluna do QR Code com o link por extenso -->
+                        <td>
+                            <input type="text" value="https://gowork.up.railway.app/form/{{ participant_id }}" readonly style="width: 100%;">
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
