@@ -28,9 +28,17 @@ def initialize_participants():
             "name": "",
             "email": "",
             "contact": "",
-            "match": "",
+            "match": "",  # Inicializando o campo "match" em branco
             "status": "pending"
         })
+        # Geração do QR Code
+        qr_code_data = f"https://gowork.up.railway.app/form/{participant_id}"
+        img = qrcode.make(qr_code_data)
+
+        # Salva a imagem do QR code no diretório 'static'
+        qr_image_path = f'static/{participant_id}.png'
+        img.save(qr_image_path)
+    
     print("Participantes inicializados com sucesso.")
 
 # Rota para inicializar os participantes manualmente
@@ -39,15 +47,15 @@ def init_participants():
     initialize_participants()
     return "Participantes inicializados com sucesso."
 
-# Função para garantir que o diretório 'static' exista
-def ensure_static_dir():
-    if not os.path.exists('static'):
-        os.makedirs('static')
-
 # Rota para o menu principal (index)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+# Função para garantir que o diretório 'static' exista
+def ensure_static_dir():
+    if not os.path.exists('static'):
+        os.makedirs('static')
 
 # Geração do QR Code e envio da imagem diretamente
 @app.route('/generate_qr/<participant_id>')
