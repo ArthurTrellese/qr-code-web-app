@@ -29,22 +29,29 @@ def initialize_participants():
     participants_ref = db.collection('participants')
     for i in range(1, 3001):
         participant_id = f"G-{i:04d}"
-        participants_ref.document(participant_id).set({
-            "name": "",
-            "email": "",
-            "contact": "",
-            "match": "",  # Inicializando o campo "match" em branco
-            "status": "pending"
-        })
-        # Geração do QR Code
-        qr_code_data = f"https://gowork.up.railway.app/form/{participant_id}"
-        img = qrcode.make(qr_code_data)
+        # Verifica se o participante já existe
+        if not participants_ref.document(participant_id).get().exists:
+            try:
+                participants_ref.document(participant_id).set({
+                    "name": "",
+                    "email": "",
+                    "contact": "",
+                    "match": "",  # Inicializando o campo "match" em branco
+                    "status": "pending"
+                })
+                print(f"Participante {participant_id} salvo com sucesso.")
+                
+                # Geração do QR Code
+                qr_code_data = f"https://gowork.up.railway.app/form/{participant_id}"
+                img = qrcode.make(qr_code_data)
 
-        # Salva a imagem do QR code no diretório 'static'
-        qr_image_path = f'static/{participant_id}.png'
-        img.save(qr_image_path)
+                # Salva a imagem do QR code no diretório 'static'
+                qr_image_path = f'static/{participant_id}.png'
+                img.save(qr_image_path)
+            except Exception as e:
+                print(f"Erro ao salvar o participante {participant_id}: {str(e)}")
     
-    print("Participantes inicializados com sucesso.")
+    print("Todos os participantes foram inicializados com sucesso.")
 
 # Rota para inicializar os participantes manualmente
 @app.route('/init_participants')
