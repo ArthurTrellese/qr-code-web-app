@@ -160,7 +160,7 @@
 
         // Função para enviar o QR code escaneado ao backend e verificar o match
         function processQRCode(scannedId) {
-            const participantId = "{{ participant_id }}";
+            const participantId = "{{ participant_id }}"; // Certifique-se de que o Flask está passando o participant_id corretamente
 
             fetch('/check_match', {
                 method: 'POST',
