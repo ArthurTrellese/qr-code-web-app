@@ -39,11 +39,6 @@ def init_participants():
     initialize_participants()
     return "Participantes inicializados com sucesso."
 
-# Rota para o menu principal (index)
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 # Função para garantir que o diretório 'static' exista
 def ensure_static_dir():
     if not os.path.exists('static'):
@@ -88,7 +83,7 @@ def show_form(participant_id):
         participant_ref = db.collection('participants').document(participant_id)
         participant = participant_ref.get()
     
-        if participant.exists():
+        if participant.exists:
             if participant.to_dict().get("status") == "pending":
                 # Exibe o formulário para cadastrar os dados
                 return render_template('form.html', participant_id=participant_id)
