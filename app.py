@@ -202,5 +202,14 @@ def update_match():
     except Exception as e:
         return f"Ocorreu um erro ao atualizar o match: {str(e)}", 500
 
+# Rota para gerar todos os participantes
+@app.route('/generate_participants', methods=['POST'])
+def generate_participants():
+    try:
+        initialize_participants()
+        return redirect(url_for('view_participants'))
+    except Exception as e:
+        return f"Ocorreu um erro ao gerar participantes: {str(e)}", 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
