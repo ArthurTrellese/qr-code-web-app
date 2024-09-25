@@ -129,10 +129,11 @@ def check_match():
 # Rota para visualizar todos os participantes sem paginação
 @app.route('/view_participants', methods=['GET'])
 def view_participants():
-    if not os.path.exists(db_file):
-        return "Erro: O arquivo participants.json não foi encontrado.", 500
-
     participants = load_participants()
+
+    if not participants:
+        return "Erro: Nenhum participante encontrado.", 400
+
     return render_template('view_participants.html', participants=participants)
 
 # Rota para atualizar o match manualmente
@@ -175,15 +176,18 @@ def update_participant():
 # Rota para atualizar todos os participantes
 @app.route('/update_all_participants', methods=['POST'])
 def update_all_participants():
-    participants_data = request.form.get('participants')
+    participants_data = request.form.to_dict(flat=False)  # Converte o formulário em um dicionário
     participants = load_participants()
+
+    if not participants_data:
+        return "Erro: Nenhum dado enviado para atualização.", 400
 
     for participant_id, details in participants_data.items():
         if participant_id in participants:
-            participants[participant_id]['name'] = details.get('name', participants[participant_id]['name'])
-            participants[participant_id]['email'] = details.get('email', participants[participant_id]['email'])
-            participants[participant_id]['contact'] = details.get('contact', participants[participant_id]['contact'])
-            participants[participant_id]['match'] = details.get('match', participants[participant_id]['match'])
+            participants[participant_id]['name'] = details[0].get('name', participants[participant_id]['name'])
+            participants[participant_id]['email'] = details[0].get('email', participants[participant_id]['email'])
+            participants[participant_id]['contact'] = details[0].get('contact', participants[participant_id]['contact'])
+            participants[participant_id]['match'] = details[0].get('match', participants[participant_id]['match'])
 
     save_participants(participants)
     return redirect(url_for('view_participants'))
