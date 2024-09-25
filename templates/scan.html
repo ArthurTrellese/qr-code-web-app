@@ -97,6 +97,7 @@
 
     <script>
         let streamStarted = false; // Controla se a câmera já foi iniciada
+        let videoStream = null; // Mantém a referência do stream da câmera
 
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
@@ -108,19 +109,30 @@
 
         // Função para iniciar a câmera e capturar o QR code
         function startCamera() {
-            if (!streamStarted) { // Garantir que a câmera só inicie uma vez
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            if (streamStarted) {
+                stopCamera(); // Para a câmera se já estiver ativa
+            }
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
                 .then(stream => {
                     video.srcObject = stream;
                     video.setAttribute('playsinline', true); // Para compatibilidade com iOS
                     video.play();
-                    streamStarted = true; // Marcar a câmera como iniciada
+                    videoStream = stream; // Armazena o stream atual
+                    streamStarted = true;
                     scanQRCode();
                 })
                 .catch(err => {
                     console.error("Erro ao acessar a câmera: ", err);
                     resultDiv.innerHTML = `<p class="error">Erro ao acessar a câmera.</p>`;
                 });
+        }
+
+        // Função para parar a câmera
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop()); // Para o stream da câmera
+                streamStarted = false;
+                videoStream = null;
             }
         }
 
@@ -181,6 +193,11 @@
         // Iniciar a câmera ao carregar a página
         window.onload = () => {
             startCamera();
+        };
+
+        // Parar a câmera ao sair da página
+        window.onbeforeunload = () => {
+            stopCamera();
         };
     </script>
 </body>
